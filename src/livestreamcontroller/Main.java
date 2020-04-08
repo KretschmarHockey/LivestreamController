@@ -50,7 +50,11 @@ public class Main {
         greenScreenFrame.pack();
         greenScreenFrame.setVisible(true);
     }
-
+    
+    /**
+     * 
+     * @param args 
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             try {

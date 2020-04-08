@@ -47,7 +47,7 @@ public class Database {
      * @throws SQLException
      */
     public ResultSet select(String strSelect) throws SQLException {
-        System.out.println("The SQL statement is: " + strSelect + "\n"); // Echo for debugging
+        System.out.println("The SQL statement is: " + strSelect); // Echo for debugging
 
         ResultSet rset = stmt.executeQuery(strSelect);
 

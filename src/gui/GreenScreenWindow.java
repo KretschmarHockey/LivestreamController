@@ -16,10 +16,13 @@
  */
 package gui;
 
+import database.StartingGoalieObject;
 import graphics.Nameplate;
 import graphics.StartingGoalie;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -30,15 +33,15 @@ import javax.swing.Timer;
 public final class GreenScreenWindow extends JPanel {
 
     private final Nameplate nameplate = new Nameplate();
-    private final StartingGoalie startingGoalie = new StartingGoalie();
+    private StartingGoalie startingGoalie;
 
     public GreenScreenWindow() {
         setWindowColour(0, 255, 0);
     }
-    
+
     /**
      * Sets 'green' screen colour.
-     * 
+     *
      * @param r The red component.
      * @param g The green component.
      * @param b The blue component.
@@ -55,9 +58,11 @@ public final class GreenScreenWindow extends JPanel {
     private void draw(Graphics g) {
         // Nameplate
         nameplate.draw(g);
-        
+
         // Starting Goalie
-        startingGoalie.draw(g);
+        if (startingGoalie != null) {
+            startingGoalie.draw(g);
+        }
     }
 
     /**
@@ -110,8 +115,6 @@ public final class GreenScreenWindow extends JPanel {
 
         return nameplate.isVisible();
     }
-    
-    
 
     /**
      * Displays nameplate if hidden. Hides nameplate if displayed.
@@ -140,6 +143,17 @@ public final class GreenScreenWindow extends JPanel {
             }).start();
         }
 
+        return startingGoalie.isVisible();
+    }
+
+    public void setStartingGoalie(ResultSet rs) throws SQLException {
+        startingGoalie = new StartingGoalie(new StartingGoalieObject(rs));
+    }
+    
+    public boolean isStartingGoalieVisible() { // Doesn't look good for some reason
+        if (startingGoalie == null) {
+            return false;
+        }
         return startingGoalie.isVisible();
     }
 }

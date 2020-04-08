@@ -16,6 +16,7 @@
  */
 package graphics;
 
+import java.awt.AlphaComposite;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -88,15 +89,13 @@ public abstract class LivestreamGraphic {
      * 
      * @param g The Graphics Instance.
      * @param text The String to draw.
-     * @param maxWidth The maximum width of the string.
+     * @param rect The Rectangle for position and width.
      * @param font The font used to draw.
-     * @param x the x coordinate.
-     * @param y the y coordinate.
      */
-    public void drawStringSemiCondensed(Graphics g, String text, int maxWidth, Font font, int x, int y) {
+    public void drawStringSemiCondensed(Graphics g, String text, Rectangle rect, Font font) {
         // Get the width of string
         int width = g.getFontMetrics(font).stringWidth(text);
-        if (maxWidth < width) {
+        if (rect.width < width) {
             // Changing text attribute to semi-condensed
             Map<TextAttribute, Object> attributes = new HashMap<>();
             attributes.put(TextAttribute.WIDTH, TextAttribute.WIDTH_SEMI_CONDENSED);
@@ -104,7 +103,7 @@ public abstract class LivestreamGraphic {
         }
         
         g.setFont(font); 
-        g.drawString(text, x, y);
+        g.drawString(text, rect.x, rect.y);
     }
     
     /**
@@ -116,5 +115,15 @@ public abstract class LivestreamGraphic {
      */
     public void drawImage(Graphics g, Image img, Rectangle rect) {
         g.drawImage(img, rect.x, rect.y, rect.width, rect.height, null);
+    }
+    
+    public void drawScaledImage(Graphics g, Image img, Rectangle rect) {
+        g.drawImage(img, rect.x, rect.y, img.getWidth(null)/8, img.getHeight(null)/8, null);
+    }
+    
+    public void setImageAlpha(Graphics g, int alpha) {
+        AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) alpha/255);
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setComposite(ac);
     }
 }

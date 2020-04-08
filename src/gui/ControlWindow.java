@@ -21,13 +21,17 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.font.TextAttribute;
+import java.sql.ResultSet;
 import javax.swing.plaf.basic.BasicBorders;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -38,9 +42,9 @@ import javax.swing.JTextField;
  * @author Joshua Kretschmar JoshuaJKretschmar@gmail.com
  */
 public class ControlWindow {
-    
+
     private final JPanel mainPanel;
-    
+
     public ControlWindow(GreenScreenWindow greenScreenWindow) throws SQLException {
         // Connect to database
         Database database = new Database();
@@ -94,12 +98,26 @@ public class ControlWindow {
         lStartingGoalie.setForeground(Color.RED);
 
         // Toggle Starting Goalie Button
-        JButton bToggleStartingGoalie = new JButton("Show");
+        JButton bToggleStartingGoalie;
+        bToggleStartingGoalie = new JButton("Show");
         bToggleStartingGoalie.setBackground(Color.BLACK);
         bToggleStartingGoalie.setForeground(Color.WHITE);
         bToggleStartingGoalie.setBorder(new BasicBorders.ButtonBorder(null, Color.RED, null, Color.RED));
         bToggleStartingGoalie.setFocusPainted(false);
         bToggleStartingGoalie.setPreferredSize(new Dimension(50, 25));
+
+        // Starting Goalie Selector
+        JComboBox cbStartingGoalieSelector = new JComboBox();
+        ResultSet rs = database.select(
+                "SELECT CONCAT(player.first_name, ' ', player.last_name) as NAME "
+                + "FROM player "
+                + "INNER JOIN goalkeeping_stats "
+                + "ON goalkeeping_stats.player_id = player.player_id"
+        );
+        cbStartingGoalieSelector.insertItemAt("", 0);
+        while (rs.next()) {
+            cbStartingGoalieSelector.addItem(rs.getString("NAME"));
+        }
 
         // Designing Layout
         layout.setHorizontalGroup(layout.createSequentialGroup()
@@ -107,22 +125,31 @@ public class ControlWindow {
                         .addComponent(lNameplate)
                         .addGroup(layout.createSequentialGroup()
                                 .addComponent(bSetNameplate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(bToggleNameplate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                .addComponent(bToggleNameplate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        )
                         .addComponent(tfNameplate)
-                        .addComponent(lDisplayNameplate))
+                        .addComponent(lDisplayNameplate)
+                )
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(lStartingGoalie)
-                        .addComponent(bToggleStartingGoalie, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addComponent(bToggleStartingGoalie, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cbStartingGoalieSelector, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                )
         );
         layout.setVerticalGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(lNameplate)
-                        .addComponent(lStartingGoalie))
+                        .addComponent(lStartingGoalie)
+                )
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(bToggleNameplate)
                         .addComponent(bSetNameplate)
-                        .addComponent(bToggleStartingGoalie))
-                .addComponent(tfNameplate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(bToggleStartingGoalie)
+                )
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(tfNameplate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cbStartingGoalieSelector, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                )
                 .addComponent(lDisplayNameplate)
         );
 
@@ -146,7 +173,7 @@ public class ControlWindow {
                 System.out.println("[cw] Hidden Nameplate");
             }
         });
-        
+
         // Toggle starting goalie visibility
         bToggleStartingGoalie.addActionListener(e -> {
             if (greenScreenWindow.toggleStartingGoalies()) {
@@ -159,8 +186,38 @@ public class ControlWindow {
                 System.out.println("[cw] Hidden Starting Goalies");
             }
         });
+
+        // Changing starting goalie
+        cbStartingGoalieSelector.addActionListener(e -> {
+            if (greenScreenWindow.isStartingGoalieVisible()) {
+                greenScreenWindow.toggleStartingGoalies(); // TODO: Should animate close
+                bToggleStartingGoalie.setBackground(Color.BLACK);
+                bToggleStartingGoalie.setText("Show");
+                System.out.println("[cw] Hidden Starting Goalies");
+            }
+            try {
+                ResultSet rsGoalie = database.select(
+                        "SELECT player.team_id, player.number, player.first_name, "
+                        + "player.last_name, goalkeeping_stats.w, goalkeeping_stats.otw, "
+                        + "goalkeeping_stats.otl, goalkeeping_stats.l, goalkeeping_stats.mip, "
+                        + "goalkeeping_stats.ga, goalkeeping_stats.svs, goalkeeping_stats.sog, "
+                        + "goalkeeping_stats.so "
+                        + "FROM goalkeeping_stats "
+                        + "INNER JOIN player "
+                        + "ON player.player_id = goalkeeping_stats.player_id "
+                        + "WHERE '" + cbStartingGoalieSelector.getSelectedItem()
+                        + "' = CONCAT(player.first_name, ' ', player.last_name);"
+                );
+                greenScreenWindow.setStartingGoalie(rsGoalie);
+                System.out.println("[cw] Starting Goalie changed to " + cbStartingGoalieSelector.getSelectedItem());
+            } catch (SQLException ex) {
+                Logger.getLogger(ControlWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        });
+
     }
-    
+
     public JComponent getMainComponent() {
         return mainPanel;
     }
