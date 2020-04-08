@@ -18,8 +18,9 @@ package livestreamcontroller;
 
 import gui.GreenScreenWindow;
 import gui.ControlWindow;
-import javax.swing.*;
 import java.sql.SQLException;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -37,12 +38,12 @@ public class Main {
         controlFrame.getContentPane().add(controlWindow.getMainComponent());
         controlFrame.pack();
         controlFrame.setLocationByPlatform(true);
-        controlFrame.setSize(300, 300);
+        controlFrame.setSize(1280, 720);
         controlFrame.setVisible(true);
 
         // Creating Green Screen Frame
         JFrame greenScreenFrame = new JFrame();
-        greenScreenFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        greenScreenFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // TODO: Just for testing purposes
         greenScreenFrame.getContentPane().add(greenScreenWindow);
         greenScreenFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         greenScreenFrame.setUndecorated(true);

@@ -17,8 +17,11 @@
 package gui;
 
 import graphics.Nameplate;
-import javax.swing.*;
-import java.awt.*;
+import graphics.StartingGoalie;
+import java.awt.Color;
+import java.awt.Graphics;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
 /**
  *
@@ -27,6 +30,7 @@ import java.awt.*;
 public final class GreenScreenWindow extends JPanel {
 
     private final Nameplate nameplate = new Nameplate();
+    private final StartingGoalie startingGoalie = new StartingGoalie();
 
     public GreenScreenWindow() {
         setWindowColour(0, 255, 0);
@@ -51,6 +55,9 @@ public final class GreenScreenWindow extends JPanel {
     private void draw(Graphics g) {
         // Nameplate
         nameplate.draw(g);
+        
+        // Starting Goalie
+        startingGoalie.draw(g);
     }
 
     /**
@@ -79,7 +86,7 @@ public final class GreenScreenWindow extends JPanel {
      *
      * @return Whether the nameplate is displayed.
      */
-    boolean toggleNameplate() {
+    public boolean toggleNameplate() {
         if (nameplate.isVisible()) {
             nameplate.setVisible(false);
             new Timer(1, e -> {
@@ -102,5 +109,37 @@ public final class GreenScreenWindow extends JPanel {
         }
 
         return nameplate.isVisible();
+    }
+    
+    
+
+    /**
+     * Displays nameplate if hidden. Hides nameplate if displayed.
+     *
+     * @return Whether the nameplate is displayed.
+     */
+    public boolean toggleStartingGoalies() {
+        if (startingGoalie.isVisible()) {
+            startingGoalie.setVisible(false);
+            new Timer(1, e -> {
+                if (startingGoalie.close()) {
+                    repaint();
+                } else {
+                    ((Timer) e.getSource()).stop();
+                }
+            }).start();
+        } else {
+            startingGoalie.setVisible(true);
+            startingGoalie.startSettings();
+            new Timer(1, e -> {
+                if (startingGoalie.open()) {
+                    repaint();
+                } else {
+                    ((Timer) e.getSource()).stop();
+                }
+            }).start();
+        }
+
+        return startingGoalie.isVisible();
     }
 }

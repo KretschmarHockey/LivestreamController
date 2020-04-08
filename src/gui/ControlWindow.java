@@ -17,19 +17,30 @@
 package gui;
 
 import database.Database;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.font.TextAttribute;
 import javax.swing.plaf.basic.BasicBorders;
-import java.awt.*;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.BorderFactory;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 /**
  *
  * @author Joshua Kretschmar JoshuaJKretschmar@gmail.com
  */
 public class ControlWindow {
-
+    
     private final JPanel mainPanel;
-
+    
     public ControlWindow(GreenScreenWindow greenScreenWindow) throws SQLException {
         // Connect to database
         Database database = new Database();
@@ -43,7 +54,15 @@ public class ControlWindow {
         layout.setAutoCreateContainerGaps(true);
 
         // Designing Components
-        // Set Button
+        //*********************Nameplate*********************//
+        // Nameplate Label
+        JLabel lNameplate = new JLabel("Nameplate");
+        Map<TextAttribute, Integer> fontAttributes = new HashMap<>();
+        fontAttributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+        lNameplate.setFont(new Font("SansSerif", Font.BOLD, 30).deriveFont(fontAttributes));
+        lNameplate.setForeground(Color.RED);
+
+        // Set Nameplate Button
         JButton bSetNameplate = new JButton("Set");
         bSetNameplate.setBackground(Color.BLACK);
         bSetNameplate.setForeground(Color.WHITE);
@@ -51,7 +70,7 @@ public class ControlWindow {
         bSetNameplate.setFocusPainted(false);
         bSetNameplate.setPreferredSize(new Dimension(50, 25));
 
-        // Toggle Button
+        // Toggle Nameplate Button
         JButton bToggleNameplate = new JButton("Show");
         bToggleNameplate.setBackground(Color.BLACK);
         bToggleNameplate.setForeground(Color.WHITE);
@@ -59,38 +78,59 @@ public class ControlWindow {
         bToggleNameplate.setFocusPainted(false);
         bToggleNameplate.setPreferredSize(new Dimension(50, 25));
 
-        // Text field
+        // Nameplate Text field
         JTextField tfNameplate = new JTextField();
+        tfNameplate.setMaximumSize(new Dimension(200, 20));
 
-        // Name Display Label
-        JLabel lNameplate = new JLabel();
-        lNameplate.setForeground(Color.RED);
-        lNameplate.setBorder(BorderFactory.createLineBorder(Color.RED));
+        // Nameplate Display Label
+        JLabel lDisplayNameplate = new JLabel();
+        lDisplayNameplate.setForeground(Color.RED);
+        lDisplayNameplate.setBorder(BorderFactory.createLineBorder(Color.RED));
+
+        //*****************Starting Goalies********************//
+        // Starting Goalie Label
+        JLabel lStartingGoalie = new JLabel("Starting Goalies");
+        lStartingGoalie.setFont(new Font("SansSerif", Font.BOLD, 30).deriveFont(fontAttributes));
+        lStartingGoalie.setForeground(Color.RED);
+
+        // Toggle Starting Goalie Button
+        JButton bToggleStartingGoalie = new JButton("Show");
+        bToggleStartingGoalie.setBackground(Color.BLACK);
+        bToggleStartingGoalie.setForeground(Color.WHITE);
+        bToggleStartingGoalie.setBorder(new BasicBorders.ButtonBorder(null, Color.RED, null, Color.RED));
+        bToggleStartingGoalie.setFocusPainted(false);
+        bToggleStartingGoalie.setPreferredSize(new Dimension(50, 25));
 
         // Designing Layout
-        layout.setHorizontalGroup(
-                layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                                .addGroup(layout.createSequentialGroup()
-                                        .addComponent(bSetNameplate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(bToggleNameplate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                                .addComponent(tfNameplate)
-                                .addComponent(lNameplate))
-        );
-        layout.setVerticalGroup(
-                layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                                .addComponent(bToggleNameplate)
-                                .addComponent(bSetNameplate))
-                        .addComponent(tfNameplate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        layout.setHorizontalGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(lNameplate)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(bSetNameplate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(bToggleNameplate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addComponent(tfNameplate)
+                        .addComponent(lDisplayNameplate))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(lStartingGoalie)
+                        .addComponent(bToggleStartingGoalie, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+        );
+        layout.setVerticalGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(lNameplate)
+                        .addComponent(lStartingGoalie))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(bToggleNameplate)
+                        .addComponent(bSetNameplate)
+                        .addComponent(bToggleStartingGoalie))
+                .addComponent(tfNameplate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addComponent(lDisplayNameplate)
         );
 
         // Adding functionality
         // Set text in text field to nameplate
         bSetNameplate.addActionListener(e -> {
             greenScreenWindow.setText(tfNameplate.getText().toUpperCase());
-            lNameplate.setText(tfNameplate.getText().toUpperCase());
+            lDisplayNameplate.setText(tfNameplate.getText().toUpperCase());
             System.out.println("[cw] Set Nameplate Text: " + tfNameplate.getText().toUpperCase());
         });
 
@@ -105,10 +145,22 @@ public class ControlWindow {
                 bToggleNameplate.setText("Show");
                 System.out.println("[cw] Hidden Nameplate");
             }
-
+        });
+        
+        // Toggle starting goalie visibility
+        bToggleStartingGoalie.addActionListener(e -> {
+            if (greenScreenWindow.toggleStartingGoalies()) {
+                bToggleStartingGoalie.setBackground(Color.RED);
+                bToggleStartingGoalie.setText("Hide");
+                System.out.println("[cw] Shown Starting Goalies");
+            } else {
+                bToggleStartingGoalie.setBackground(Color.BLACK);
+                bToggleStartingGoalie.setText("Show");
+                System.out.println("[cw] Hidden Starting Goalies");
+            }
         });
     }
-
+    
     public JComponent getMainComponent() {
         return mainPanel;
     }

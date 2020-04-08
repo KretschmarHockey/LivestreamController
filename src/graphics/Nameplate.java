@@ -16,7 +16,10 @@
  */
 package graphics;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 
 /**
  *
@@ -46,16 +49,14 @@ public class Nameplate extends LivestreamGraphic {
      */
     @Override
     public void draw(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g;
-
         // Draws white background
-        g.setColor(new Color(255, 255, 255, alpha));
-        g2.fillRect(background.x, background.y, background.width, background.height); // TODO: Add gradient
+        g.setColor(new Color(250, 250, 250, alpha));
+        drawRectangle(g, background); // TODO: Add gradient
         // Draws maroon foreground
         g.setColor(new Color(122, 42, 59, alpha)); // TODO: Changeable colour
-        g.fillRect(foreground.x, foreground.y, foreground.width, foreground.height); // TODO: Add gradient
+        drawRectangle(g, foreground); // TODO: Add gradient
         // Draws text
-        g.setColor(new Color(255, 255, 255, alpha));
+        g.setColor(new Color(250, 250, 250, alpha));
         drawCenteredString(g, text, textBound, new Font("SansSerif", Font.BOLD, 35));
         // Draws green cover to hide text interpolating down
         g.setColor(Color.GREEN);
@@ -102,7 +103,8 @@ public class Nameplate extends LivestreamGraphic {
             foreground.width = 525;
         }
 
-        return background.x > 690 || background.width < 535 || foreground.x > 695 || foreground.width < 525;
+        return background.x > 690 || background.width < 535 || foreground.x > 695
+                || foreground.width < 525;
     }
 
     /**
@@ -116,26 +118,5 @@ public class Nameplate extends LivestreamGraphic {
         }
 
         return alpha > 0;
-    }
-
-    /**
-     * Draw a String centered in the middle of a Rectangle.
-     *
-     * @param g The Graphics Instance.
-     * @param text The String to draw.
-     * @param rect The Rectangle to center the text in.
-     * @param font The font used to draw.
-     */
-    private void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) { // TODO: Fix Font Overdrawing
-        // Get the FontMetrics
-        FontMetrics metrics = g.getFontMetrics(font);
-        // Determine the X coordinate for the text
-        int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
-        // Determine the Y coordinate for the text (note we add the ascent, as in Java 2D 0 is top of the screen)
-        int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
-        // Set the font
-        g.setFont(font);
-        // Draw the string
-        g.drawString(text, x, y);
     }
 }
