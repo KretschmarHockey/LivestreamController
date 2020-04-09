@@ -23,8 +23,10 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 /**
- *
+ * Provides launch for application.
+ * 
  * @author Joshua Kretschmar JoshuaJKretschmar@gmail.com
+ * @version %I% %G%
  */
 public class Main {
 
@@ -52,10 +54,9 @@ public class Main {
     }
     
     /**
-     * 
-     * @param args 
+     * Main method.
      */
-    public static void main(String[] args) {
+    public static void main() {
         SwingUtilities.invokeLater(() -> {
             try {
                 createAndShowGui();

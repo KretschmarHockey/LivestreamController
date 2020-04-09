@@ -29,12 +29,18 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 /**
+ * Provides a starting goalie graphic that displays current season statistics.
+ * Should be used before the game.
  *
  * @author Joshua Kretschmar JoshuaJKretschmar@gmail.com
+ * @version %I% %G%
  */
 public class StartingGoalie extends LivestreamGraphic {
 
-    private StartingGoalieObject goalie;
+    // The object used for converting database results into a format for the graphic.
+    private final StartingGoalieObject goalie;
+
+    // Graphic structure pieces.
     private Rectangle background = new Rectangle(580, 770, 830, 230);
     private Rectangle headBackground = new Rectangle(585, 780, 245, 215);
     private Rectangle nameBackground = new Rectangle(930, 780, 300, 80);
@@ -48,7 +54,7 @@ public class StartingGoalie extends LivestreamGraphic {
     private Rectangle divider7 = new Rectangle(1119, 900, 7, 95);
     private Rectangle divider8 = new Rectangle(1262, 900, 7, 95);
 
-    // Bounds
+    // Bounds for texts.
     private Rectangle numberBound = new Rectangle(840, 780, 80, 80);
     private Rectangle recTextBound = new Rectangle(840, 900, 136, 35);
     private Rectangle gaaTextBound = new Rectangle(983, 900, 136, 35);
@@ -61,6 +67,7 @@ public class StartingGoalie extends LivestreamGraphic {
     private Rectangle firstNameTextBound = new Rectangle(940, 812, 290, 0);
     private Rectangle lastNameTextBound = new Rectangle(940, 850, 290, 0);
 
+    // Transparency level of graphic.
     private int alpha = 255;
 
     // Team Logo
@@ -80,6 +87,11 @@ public class StartingGoalie extends LivestreamGraphic {
     private final Font fontBold40 = new Font("SansSerif", Font.BOLD, 40);
     private final Font fontBold60 = new Font("SansSerif", Font.BOLD, 60);
 
+    /**
+     * Constructor.
+     *
+     * @param goalie Data structure for storing goalie statistics.
+     */
     public StartingGoalie(StartingGoalieObject goalie) {
         this.goalie = goalie;
     }
@@ -92,11 +104,11 @@ public class StartingGoalie extends LivestreamGraphic {
     @Override
     public void draw(Graphics g) {
         // Load images
-        if (teamLogo == null || playerProfile == null) {
+        if (teamLogo == null || playerProfile == null || advertisement == null) {
             try {
                 teamLogo = ImageIO.read(new File("assets/logos/" + goalie.getTeam() + ".png"));
                 playerProfile = ImageIO.read(new File("assets/playerprofiles/" + goalie.getFullName() + ".png"));
-                advertisement = ImageIO.read(new File("assets/logos/Pita Pit.jpg"));
+                advertisement = ImageIO.read(new File("assets/logos/Pita Pit.jpg")); //TODO: Changeable advertisement.
             } catch (IOException ex) {
                 Logger.getLogger(StartingGoalie.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -110,6 +122,7 @@ public class StartingGoalie extends LivestreamGraphic {
         drawRectangle(g, background);
 
         // Player Head Background
+        // TODO: Colours for teams.
         switch (goalie.getTeam()) {
             case "Botany Swarm":
                 g.setColor(new Color(122, 42, 59, alpha));
@@ -133,11 +146,11 @@ public class StartingGoalie extends LivestreamGraphic {
 
         drawRectangle(g, headBackground);
         drawImage(g, teamLogo, teamLogoBound);
-        drawScaledImage(g, playerProfile, playerProfileBound); //Image must be 1920x1920. Bottom 40 pixels transparent. Right 80
+        drawPlayerHeadshot(g, playerProfile, playerProfileBound);
 
         // Other backgrounds
         g.setColor(new Color(34, 49, 66, alpha));
-        drawRectangle(g, nameBackground); // Unsure on colour
+        drawRectangle(g, nameBackground);
         drawImage(g, advertisement, advertisementBound);
         g.setColor(new Color(19, 83, 132, alpha));
         drawRectangle(g, thisSeasonBackground);
@@ -223,7 +236,8 @@ public class StartingGoalie extends LivestreamGraphic {
     /**
      * Animates opening the starting goalies.
      *
-     * @return True while animating, False when finished
+     * @return <code>true</code> while animating, <code>false</code> when
+     * finished.
      */
     public boolean open() {
         if (background.y > 770) {
@@ -308,6 +322,12 @@ public class StartingGoalie extends LivestreamGraphic {
         return background.y > 770;
     }
 
+    /**
+     * Fades graphic out.
+     *
+     * @return <code>true</code> while animating, <code>false</code> when
+     * finished.
+     */
     public boolean close() {
         if (alpha > 0) {
             alpha--;
@@ -315,8 +335,12 @@ public class StartingGoalie extends LivestreamGraphic {
 
         return alpha > 0;
     }
-    
-    public void setInvisible() {
-        alpha = 0;
+
+    /**
+     * @return full name of player displayed on graphic.
+     */
+    @Override
+    public String toString() {
+        return goalie.getFullName();
     }
 }

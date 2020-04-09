@@ -23,14 +23,24 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
+ * Database Object.
+ *
+ * Provides a connection to NZIHL database and a method for executing select
+ * queries.
  *
  * @author Joshua Kretschmar JoshuaJKretschmar@gmail.com
+ * @version %I% %G%
  */
 public class Database {
 
     Connection conn;
     Statement stmt;
 
+    /**
+     * Connects to NZIHL database with admin credentials.
+     *
+     * @throws SQLException Throws when connection cannot be made.
+     */
     public Database() throws SQLException {
         // Allocate a database 'Connection' object
         conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/nzihlplayers",

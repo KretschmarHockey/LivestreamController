@@ -38,8 +38,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 /**
+ * Provides a window for accessing controls to the green screen.
  *
  * @author Joshua Kretschmar JoshuaJKretschmar@gmail.com
+ * @version %I% %G%
  */
 public class ControlWindow {
 
@@ -189,13 +191,7 @@ public class ControlWindow {
 
         // Changing starting goalie
         cbStartingGoalieSelector.addActionListener(e -> {
-            if (greenScreenWindow.isStartingGoalieVisible()) {
-                greenScreenWindow.toggleStartingGoalies(); // TODO: Should animate close
-                bToggleStartingGoalie.setBackground(Color.BLACK);
-                bToggleStartingGoalie.setText("Show");
-                System.out.println("[cw] Hidden Starting Goalies");
-            }
-            try {
+            try { // TODO: Needs to grab the latest season. Max(goalkeeping_stats.season_id)
                 ResultSet rsGoalie = database.select(
                         "SELECT player.team_id, player.number, player.first_name, "
                         + "player.last_name, goalkeeping_stats.w, goalkeeping_stats.otw, "
@@ -218,6 +214,9 @@ public class ControlWindow {
 
     }
 
+    /**
+     * @return The panel of the control window.
+     */
     public JComponent getMainComponent() {
         return mainPanel;
     }

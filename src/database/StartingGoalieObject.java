@@ -22,8 +22,11 @@ import java.sql.Time;
 import java.text.DecimalFormat;
 
 /**
+ * Provides data structure for converting database results into
+ * {@link graphics.StartingGoalie}.
  *
  * @author Joshua Kretschmar JoshuaJKretschmar@gmail.com
+ * @version %I% %G%
  */
 public class StartingGoalieObject {
 
@@ -41,6 +44,29 @@ public class StartingGoalieObject {
     int sog;
     int so;
 
+    /**
+     * Constructor.
+     * <p>
+     * The result set format includes:
+     * <ul>
+     * <li> int Team ID.
+     * <li> int Player number.
+     * <li> String Player first name.
+     * <li> String Player last name.
+     * <li> int Number of wins.
+     * <li> int Number of overtime wins.
+     * <li> int Number of overtime losses.
+     * <li> int Number of losses.
+     * <li> Time Time on ice.
+     * <li> int Number of goals against.
+     * <li> int Number of saves.
+     * <li> int Number of shots on goal.
+     * <li> int Number of shutouts.
+     * </ul>
+     *
+     * @param rs The results from database
+     * @throws SQLException Throws when {@code rs} is not formatted correctly.
+     */
     public StartingGoalieObject(ResultSet rs) throws SQLException {
         rs.next();
         this.team = rs.getInt(1);
@@ -58,6 +84,9 @@ public class StartingGoalieObject {
         this.so = rs.getInt(13);
     }
 
+    /**
+     * @return team_name from team_id
+     */
     public String getTeam() {
         switch (this.team) {
             case 1:
@@ -75,37 +104,67 @@ public class StartingGoalieObject {
         }
     }
 
+    /**
+     * @return goalie number.
+     */
     public String getNumber() {
         return Integer.toString(number);
     }
 
+    /**
+     * @return first name of player.
+     */
     public String getFirstName() {
         return firstName.toUpperCase();
     }
 
+    /**
+     * @return last name of player.
+     */
     public String getLastName() {
         return lastName.toUpperCase();
     }
 
+    /**
+     * @return full name of player.
+     */
     public String getFullName() {
         return firstName + " " + lastName;
     }
 
+    /**
+     * Formatted W-OTW-OTL-L.
+     *
+     * @return record of player.
+     */
     public String getRecord() {
         return w + "-" + otw + "-" + otl + "-" + l;
     }
 
+    /**
+     * Calculated (GA / MIP) * 60. Formated 0.00.
+     *
+     * @return goals against average of player.
+     */
     public String getGoalsAgainstAverage() {
         float mip = (toi.getHours() * 60) + toi.getMinutes() + (toi.getSeconds() / 60);
         return String.format("%.2f", (ga / mip) * 60f);
     }
 
+    /**
+     * Calculated (SVS / SOG). Formated .000.
+     *
+     * @return save percentage of player.
+     */
     public String getSavePercentage() {
         DecimalFormat df = new DecimalFormat(".000");
         float savePercentage = (float) svs / sog;
         return df.format(savePercentage);
     }
 
+    /**
+     * @return number of shutouts of player.
+     */
     public String getShutouts() {
         return Integer.toString(so);
     }

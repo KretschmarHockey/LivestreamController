@@ -22,8 +22,11 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 
 /**
+ * Provides a nameplate graphics that can be hidden, displayed. Should be used
+ * for displaying a small string of text. Such as "Anthem Singer Names".
  *
  * @author Joshua Kretschmar JoshuaJKretschmar@gmail.com
+ * @version %I% %G%
  */
 public class Nameplate extends LivestreamGraphic {
 
@@ -36,7 +39,7 @@ public class Nameplate extends LivestreamGraphic {
     /**
      * Changes text of nameplate.
      *
-     * @param text The string to be displayed
+     * @param text The string to be displayed.
      */
     public void setText(String text) {
         this.text = text;
@@ -45,7 +48,7 @@ public class Nameplate extends LivestreamGraphic {
     /**
      * Draws nameplate.
      *
-     * @param g The Graphics Instance
+     * @param g The Graphics Instance.
      */
     @Override
     public void draw(Graphics g) {
@@ -76,7 +79,8 @@ public class Nameplate extends LivestreamGraphic {
     /**
      * Animates opening the nameplate.
      *
-     * @return True while animating, False when finished
+     * @return <code>true</code> while animating, <code>false</code> when
+     * finished.
      */
     public boolean open() {
         // Interpolates variables
@@ -110,7 +114,8 @@ public class Nameplate extends LivestreamGraphic {
     /**
      * Fades nameplate out.
      *
-     * @return True while animating, False when finished
+     * @return <code>true</code> while animating, <code>false</code> when
+     * finished.
      */
     public boolean close() {
         if (alpha > 0) {

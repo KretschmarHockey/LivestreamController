@@ -27,18 +27,25 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 /**
+ * Provides a green screen window for displaying graphics.
  *
  * @author Joshua Kretschmar JoshuaJKretschmar@gmail.com
+ * @version %I% %G%
  */
 public final class GreenScreenWindow extends JPanel {
 
     private final Nameplate nameplate = new Nameplate();
-    private StartingGoalie startingGoalie;
+    private StartingGoalie selectedGoalie;
+    private StartingGoalie displayedGoalie;
 
+    /**
+     * Constructor. Sets window colour to green by default.
+     */
     public GreenScreenWindow() {
         setWindowColour(0, 255, 0);
     }
 
+    //TODO: Make this an option.
     /**
      * Sets 'green' screen colour.
      *
@@ -60,8 +67,8 @@ public final class GreenScreenWindow extends JPanel {
         nameplate.draw(g);
 
         // Starting Goalie
-        if (startingGoalie != null) {
-            startingGoalie.draw(g);
+        if (displayedGoalie != null) {
+            displayedGoalie.draw(g);
         }
     }
 
@@ -117,43 +124,62 @@ public final class GreenScreenWindow extends JPanel {
     }
 
     /**
-     * Displays nameplate if hidden. Hides nameplate if displayed.
+     * Displays or hides the starting goalie. If goalie is displayed and
+     * different goalie is selected, the displayed goalie is hidden. When
+     * toggled again the selected goalie is displayed.
      *
      * @return Whether the nameplate is displayed.
      */
     public boolean toggleStartingGoalies() {
-        if (startingGoalie.isVisible()) {
-            startingGoalie.setVisible(false);
-            new Timer(1, e -> {
-                if (startingGoalie.close()) {
-                    repaint();
+        if (selectedGoalie != null) {
+            if (displayedGoalie != null) {
+                if (selectedGoalie.toString().equals(displayedGoalie.toString())) {
+                    selectedGoalie.setVisible(false);
+                    new Timer(1, e -> {
+                        if (displayedGoalie.close()) {
+                            repaint();
+                        } else {
+                            ((Timer) e.getSource()).stop();
+                            displayedGoalie = null;
+                        }
+                    }).start();
                 } else {
-                    ((Timer) e.getSource()).stop();
+                    selectedGoalie.setVisible(false);
+                    new Timer(1, e -> {
+                        if (displayedGoalie.close()) {
+                            repaint();
+                        } else {
+                            ((Timer) e.getSource()).stop();
+                            displayedGoalie = null;
+                        }
+                    }).start();
                 }
-            }).start();
+            } else {
+                displayedGoalie = selectedGoalie;
+                selectedGoalie.setVisible(true);
+                displayedGoalie.startSettings();
+                new Timer(1, e -> {
+                    if (displayedGoalie.open()) {
+                        repaint();
+                    } else {
+                        ((Timer) e.getSource()).stop();
+                    }
+                }).start();
+            }
+            return selectedGoalie.isVisible();
         } else {
-            startingGoalie.setVisible(true);
-            startingGoalie.startSettings();
-            new Timer(1, e -> {
-                if (startingGoalie.open()) {
-                    repaint();
-                } else {
-                    ((Timer) e.getSource()).stop();
-                }
-            }).start();
-        }
-
-        return startingGoalie.isVisible();
-    }
-
-    public void setStartingGoalie(ResultSet rs) throws SQLException {
-        startingGoalie = new StartingGoalie(new StartingGoalieObject(rs));
-    }
-    
-    public boolean isStartingGoalieVisible() { // Doesn't look good for some reason
-        if (startingGoalie == null) {
             return false;
         }
-        return startingGoalie.isVisible();
+
+    }
+
+    /**
+     * Sets the selected goalie from control window.
+     *
+     * @param rs The database results of the goalie that is selected.
+     * @throws SQLException Throws when results aren't formatted correctly.
+     */
+    public void setStartingGoalie(ResultSet rs) throws SQLException {
+        selectedGoalie = new StartingGoalie(new StartingGoalieObject(rs));
     }
 }
