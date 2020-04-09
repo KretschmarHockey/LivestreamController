@@ -109,7 +109,7 @@ public class ControlWindow {
         bToggleStartingGoalie.setPreferredSize(new Dimension(50, 25));
 
         // Starting Goalie Selector
-        JComboBox cbStartingGoalieSelector = new JComboBox();
+        JComboBox<String> cbStartingGoalieSelector = new JComboBox<>();
         ResultSet rs = database.select(
                 "SELECT CONCAT(player.first_name, ' ', player.last_name) as NAME "
                 + "FROM player "

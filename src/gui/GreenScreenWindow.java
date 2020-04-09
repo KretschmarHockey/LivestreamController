@@ -34,6 +34,8 @@ import javax.swing.Timer;
  */
 public final class GreenScreenWindow extends JPanel {
 
+    private static final long serialVersionUID = 1L;
+
     private final Nameplate nameplate = new Nameplate();
     private StartingGoalie selectedGoalie;
     private StartingGoalie displayedGoalie;

@@ -30,19 +30,19 @@ import java.text.DecimalFormat;
  */
 public class StartingGoalieObject {
 
-    int team;
-    int number;
-    String firstName;
-    String lastName;
-    int w;
-    int otw;
-    int otl;
-    int l;
-    Time toi;
-    int ga;
-    int svs;
-    int sog;
-    int so;
+    private final int team;
+    private final int number;
+    private final String firstName;
+    private final String lastName;
+    private final int w;
+    private final int otw;
+    private final int otl;
+    private final int l;
+    private final Time toi;
+    private final int ga;
+    private final int svs;
+    private final int sog;
+    private final int so;
 
     /**
      * Constructor.

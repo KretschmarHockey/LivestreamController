@@ -120,10 +120,12 @@ public abstract class LivestreamGraphic {
             // Changing text attribute to semi-condensed
             Map<TextAttribute, Object> attributes = new HashMap<>();
             attributes.put(TextAttribute.WIDTH, TextAttribute.WIDTH_SEMI_CONDENSED);
-            font = font.deriveFont(attributes);
+            Font newFont = font.deriveFont(attributes);
+            g.setFont(newFont);
+        } else {
+            g.setFont(font);
         }
 
-        g.setFont(font);
         g.drawString(text, rect.x, rect.y);
     }
 
@@ -146,13 +148,13 @@ public abstract class LivestreamGraphic {
      * must be 1920x1920. The bottom 40 and Right 80 pixels must be transparent.
      * @param rect The rectangle for the position of the image.
      */
-    public void drawPlayerHeadshot(Graphics g, Image img, Rectangle rect) {
+    public void drawPlayerHeadshot(Graphics g, Image img, Rectangle rect) { //TODO: Fix scale algorithm
         g.drawImage(img, rect.x, rect.y, img.getWidth(null) / 8, img.getHeight(null) / 8, null);
     }
 
     /**
      * Sets all graphic's images alpha.
-     * 
+     *
      * @param g The graphics instance.
      * @param alpha The alpha level for the images. 0-255.
      */

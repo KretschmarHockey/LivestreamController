@@ -55,8 +55,9 @@ public class Main {
     
     /**
      * Main method.
+     * @param args
      */
-    public static void main() {
+    public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             try {
                 createAndShowGui();

@@ -33,8 +33,8 @@ import java.sql.Statement;
  */
 public class Database {
 
-    Connection conn;
-    Statement stmt;
+    private final Connection conn;
+    private final Statement stmt;
 
     /**
      * Connects to NZIHL database with admin credentials.
